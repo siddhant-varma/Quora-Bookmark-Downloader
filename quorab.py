@@ -54,7 +54,7 @@ brow.find_element_by_xpath('//*[@value="Login"]').click()
 
 brow.get("https://www.quora.com/bookmarked_answers?order=desc")
 first_question=brow.find_element_by_class_name("question_link").text
-wait_inp=input("\n\n\t\tPress Enter after Bookmark page is Fully Loaded\n\n")
+#wait_inp=input("\n\n\t\tPress Enter after Bookmark page is Fully Loaded\n\n")
 
 i=0
 while i<10:
@@ -74,9 +74,17 @@ options = {
 	'javascript-delay':10000
 }
 soup=BeautifulSoup(brow.page_source,"lxml")
-div = soup.findAll("div", {"class" : "feed_item inline_expand_item"})
-ques = soup.findAll("a", { "class" : "question_link" })
+div = soup.find_all("div", {"class" : "feed_item inline_expand_item"})
+ques = soup.find_all("a", { "class" : "question_link" })
 q_text = '//*[@id="__w2_oruv77R_link"]/span/span'
+
+for each in div:
+        print("HERE")
+        #q = each.span.span.div.div.div.a.text
+        #print(q)
+        for texts in each.find_all("span", {"class" : "ui_qtext_rendered_qtext"}):
+                print(texts.text)
+        #print(ans)
 
 """l=len(elem_share)
 j=0
