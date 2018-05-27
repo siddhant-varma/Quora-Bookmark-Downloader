@@ -1,26 +1,67 @@
 
 
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import time
 import pyperclip
 import pdfkit
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 
+creds={}
+username = ''
+password = ''
 
 brow=webdriver.Chrome()
 brow.get("https://www.quora.com/bookmarked_answers")
+
+def save_credential(field=0):
+    global username
+    global password
+    if field == 1:
+        username = str(input("Enter username/email for Quora Account:"))
+    elif field == 2:
+        password = str(input("Enter password for Quora Account:"))
+    else:
+        username = str(input("Enter username/email for Quora Account:"))
+        password = str(input("Enter password for Quora Account:"))
+    with open("creds.dat",'w') as cred:
+        cred.write("quora:%s-%s" %(username, password))
+    open_credential()
+
+#Extracts all the credantials from the file
+def open_credential():
+    global username
+    global password
+    try:
+        with open("creds.dat",'r') as cred:
+            for line in cred:
+                username = line.split(':')[1].strip().split('-')[0]
+                password = line.split(':')[1].strip().split('-')[1]
+                creds[line.split(':')[0]]= [username,password]
+    except FileNotFoundError:
+        save_credential()
+
+#
+open_credential()
+
+
+brow.find_element_by_xpath('//*[@class="text header_login_text_box ignore_interaction"]').send_keys(creds['quora'][0])
+brow.find_element_by_xpath('//*[@placeholder="Password"]').send_keys(creds['quora'][1])
+time.sleep(1)
+brow.find_element_by_xpath('//*[@value="Login"]').click()
+
+
+brow.get("https://www.quora.com/bookmarked_answers?order=desc")
+first_question=brow.find_element_by_class_name("question_link").text
 wait_inp=input("\n\n\t\tPress Enter after Bookmark page is Fully Loaded\n\n")
 
-
-first_question=brow.find_element_by_class_name("question_link").text
-brow.get("https://www.quora.com/bookmarked_answers?order=desc")
-
-
-while True:
+i=0
+while i<10:
 	brow.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 	currentQuestion=brow.find_elements_by_class_name("question_link")
 	currentQuestion=currentQuestion[len(currentQuestion)-1].text
+	i+=1
 	if(first_question == currentQuestion):
 		break
 
@@ -32,9 +73,12 @@ options = {
 	'dpi': 450,
 	'javascript-delay':10000
 }
+soup=BeautifulSoup(brow.page_source,"lxml")
+div = soup.findAll("div", {"class" : "feed_item inline_expand_item"})
+ques = soup.findAll("a", { "class" : "question_link" })
+q_text = '//*[@id="__w2_oruv77R_link"]/span/span'
 
-
-l=len(elem_share)
+"""l=len(elem_share)
 j=0
 for i in range(l):
 	try:
@@ -50,7 +94,7 @@ for i in range(l):
 	except:
 		j+=1
 		print("Fail",j)
-	
+"""	
 print("Conversion Completed")
 
 
