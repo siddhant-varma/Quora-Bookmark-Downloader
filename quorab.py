@@ -1,5 +1,3 @@
-
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
@@ -7,13 +5,13 @@ import pyperclip
 import pdfkit
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+from selenium.webdriver.common.action_chains import ActionChains
+import tkinter as tk
 
 creds={}
 username = ''
 password = ''
 
-brow=webdriver.Chrome()
-brow.get("https://www.quora.com/bookmarked_answers")
 
 def save_credential(field=0):
     global username
@@ -42,21 +40,22 @@ def open_credential():
     except FileNotFoundError:
         save_credential()
 
-#
+
 open_credential()
 
-
+brow=webdriver.Chrome()
+brow.get("https://www.quora.com/bookmarked_answers")
 brow.find_element_by_xpath('//*[@class="text header_login_text_box ignore_interaction"]').send_keys(creds['quora'][0])
 brow.find_element_by_xpath('//*[@placeholder="Password"]').send_keys(creds['quora'][1])
 time.sleep(1)
 brow.find_element_by_xpath('//*[@value="Login"]').click()
-
+time.sleep(1)
 
 brow.get("https://www.quora.com/bookmarked_answers?order=desc")
 first_question=brow.find_element_by_class_name("question_link").text
 #wait_inp=input("\n\n\t\tPress Enter after Bookmark page is Fully Loaded\n\n")
 
-i=0
+"""i=0
 while i<10:
 	brow.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 	currentQuestion=brow.find_elements_by_class_name("question_link")
@@ -64,9 +63,32 @@ while i<10:
 	i+=1
 	if(first_question == currentQuestion):
 		break
+"""
 
 
-elem_share=brow.find_elements_by_link_text("Share")
+#elem_share=brow.find_elements_by_link_text("Share")
+
+"""g = brow.find_element_by_class_name('icon_svg-stroke')
+actions = ActionChains(brow)
+actions.move_to_element(g).click().perform()"""
+a=brow.find_elements_by_class_name('AnswerQuickShare')
+ActionChains(brow).move_to_element(brow.find_element_by_class_name('AnswerQuickShare')).click().perform()
+time.sleep(1)
+l=brow.find_element_by_link_text('Copy Link')
+ActionChains(brow).move_to_element(l).click().perform()
+time.sleep(1)
+text = tk.Tk().clipboard_get()
+
+#open tab
+brow.find_element_by_tag_name('body').send_keys(Keys.LEFT_CONTROL + 't') 
+
+# Load a page 
+brow.get(text)
+# Make the tests...
+input()
+# close the tab
+brow.find_element_by_tag_name('body').send_keys(Keys.LEFT_CONTROL + 'w') 
+#brow.close()
 
 options = {
 	'page-size': 'Letter',
