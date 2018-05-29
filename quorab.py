@@ -91,6 +91,7 @@ def save_answer(link,serial):
     name=brow.title[brow.title.find("to")+3:brow.title.find("-")] + " by " + brow.title[:brow.title.find("'s")]
     if len(name)>255:
         by=name[name.find("by")+2:]
+        name=name[:name.find(" ",100)]+by #(len(name)-(len(name)%255+50))%255)
     for char in restricted_chars:
         #print(char)
         name=name.replace(char,' ')
