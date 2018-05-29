@@ -80,7 +80,7 @@ def expand_page():
     brow.execute_script("window.scrollTo(0, 0);")
     time.sleep(1)
 
-restricted_chars=['/',"\\","*",":","?","<",">","|",'"']
+restricted_chars=['/',"\\","*",":","?","<",">","|",'"',"."]
 
 def save_answer(link,serial):
     global brow
@@ -89,6 +89,8 @@ def save_answer(link,serial):
     if not os.path.exists(os.getcwd()+"\\pdf\\"):
         os.makedirs(os.getcwd()+"\\pdf\\")
     name=brow.title[brow.title.find("to")+3:brow.title.find("-")] + " by " + brow.title[:brow.title.find("'s")]
+    if len(name)>255:
+        by=name[name.find("by")+2:]
     for char in restricted_chars:
         #print(char)
         name=name.replace(char,' ')
