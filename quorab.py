@@ -75,15 +75,14 @@ while True:
 
 brow.execute_script("window.scrollTo(0, 0);")
 time.sleep(1)
-#elem_share=brow.find_elements_by_link_text("Share")
+
 t=tk.Tk()
-"""g = brow.find_element_by_class_name('icon_svg-stroke')
-actions = ActionChains(brow)
-actions.move_to_element(g).click().perform()"""
+
 a=brow.find_elements_by_class_name('AnswerQuickShare')
 links=[]
 print("HERE")
 time.sleep(2)
+
 for i in range(246,len(a),2):
     try:
         ActionChains(brow).move_to_element(a[i]).click().perform()
@@ -98,28 +97,6 @@ for i in range(246,len(a),2):
         print("Stale Element Exception Caught for i=%i" %i)
 
 
-
-"""ActionChains(brow).move_to_element(brow.find_element_by_class_name('AnswerQuickShare')).click().perform()
-time.sleep(1)
-l=brow.find_element_by_link_text('Copy Link')
-ActionChains(brow).move_to_element(l).click().perform()
-time.sleep(1)
-text = tk.Tk().clipboard_get()
-"""
-
-
-
-"""#open tab
-brow.find_element_by_tag_name('body').send_keys(Keys.LEFT_CONTROL + 't') 
-
-# Load a page 
-brow.get(text)
-# Make the tests...
-input()
-# close the tab
-brow.find_element_by_tag_name('body').send_keys(Keys.LEFT_CONTROL + 'w') 
-#brow.close()
-"""
 options = {
 	'page-size': 'Letter',
 	'dpi': 450,
