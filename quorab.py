@@ -92,7 +92,7 @@ def save_answer(link,serial):
     for char in restricted_chars:
         #print(char)
         name=name.replace(char,' ')
-    print(name)
+    #print(name)
     pdfkit.from_url(link,os.getcwd()+"\\pdf\\%i."%serial+name+".pdf",options=options)
     #print(os.getcwd()+"\\pdf\\"+brow.title.replace("?",'')+".pdf")
 
@@ -123,7 +123,6 @@ def extract_links(elements,start=0):
             l=brow.find_element_by_link_text('Copy Link')
             ActionChains(brow).move_to_element(l).click().perform()
             time.sleep(1)
-            #text = t.clipboard_get()
             text=pyperclip.paste()
             print(text)
             links.append(text)
@@ -139,7 +138,6 @@ brow = webdriver.Chrome(chrome_options=chrome_options)
 """
 Login()
 expand_page()
-t=tk.Tk()
 
 a=brow.find_elements_by_class_name('AnswerQuickShare')
 links=[]
@@ -149,31 +147,13 @@ time.sleep(2)
 extract_links(a,(int(input("Enter Last Index of temp.sid file: "))-1)*2)
 """
 
-
-#soup=BeautifulSoup(brow.page_source,"lxml")
-
 url = "http://qr.ae/TUTzkR"
 
 #save_answer(url,os.getcwd())
 save_pdf(os.getcwd()+"\\temp.sid",int(input("Last Saved Answer Number: ")))
-"""l=len(elem_share)
-j=0
-for i in range(l):
-	try:
-		elem_share[i].click()
-		time.sleep(3)
-		elem_copy=brow.find_element_by_link_text("Copy Link")
-		elem_copy.click()
-		ans_url=pyperclip.paste()
-		conn=urlopen(ans_url)
-		soup = BeautifulSoup(conn.read(),"html.parser")
-		title=soup.find('a',class_="question_link").text
-		pdfkit.from_url(ans_url,title+'.pdf',options=options)
-	except:
-		j+=1
-		print("Fail",j)
-"""
+
 brow.close()
+
 print("Conversion Completed")
 
 
