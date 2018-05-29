@@ -103,19 +103,7 @@ options = {
 	'javascript-delay':10000
 }
 soup=BeautifulSoup(brow.page_source,"lxml")
-#div = soup.find_all("div", {"class" : "feed_item inline_expand_item"})
-#ques = soup.find_all("a", { "class" : "question_link" })
-#q_text = '//*[@id="__w2_oruv77R_link"]/span/span'
-#pdfkit.from_string(brow.page_source,brow.title+'.pdf',options=options)
-"""
-for each in div:
-        print("HERE")
-        #q = each.span.span.div.div.div.a.text
-        #print(q)
-        for texts in each.find_all("span", {"class" : "ui_qtext_rendered_qtext"}):
-                print(texts.text)
-        #print(ans)
-"""
+
 """l=len(elem_share)
 j=0
 for i in range(l):
