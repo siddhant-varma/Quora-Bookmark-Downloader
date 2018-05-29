@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import pyperclip
 import pdfkit
+import os
 import selenium.common.exceptions
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
@@ -20,7 +21,6 @@ def write_file(links,file):
             out.write(link+"\n")
 
 
-
 def save_credential(field=0):
     global username
     global password
@@ -35,6 +35,7 @@ def save_credential(field=0):
         cred.write("quora:%s-%s" %(username, password))
     open_credential()
 
+
 #Extracts all the credantials from the file
 def open_credential():
     global username
@@ -48,14 +49,11 @@ def open_credential():
     except FileNotFoundError:
         save_credential()
 
-
-open_credential()
-
-
+"""open_credential()
 #Disable Infobar on Chrome automated web browser
 chrome_options = Options()
 chrome_options.add_argument("--disable-infobars")
-brow = webdriver.Chrome(chrome_options=chrome_options)
+brow = webdriver.Chrome(chrome_options=chrome_options)"""
 
 def Login():
     global brow
@@ -84,6 +82,17 @@ def expand_page():
     brow.execute_script("window.scrollTo(0, 0);")
     time.sleep(1)
 
+def save_answer(link,path):
+    path=path.replace("\\","\\\\")
+    global brow
+    brow.get(link)
+    pdfkit.from_url(link,brow.title+".pdf")
+
+"""open_credential()
+#Disable Infobar on Chrome automated web browser
+chrome_options = Options()
+chrome_options.add_argument("--disable-infobars")
+brow = webdriver.Chrome(chrome_options=chrome_options)
 
 Login()
 expand_page()
@@ -92,7 +101,7 @@ t=tk.Tk()
 a=brow.find_elements_by_class_name('AnswerQuickShare')
 links=[]
 print("HERE")
-time.sleep(2)
+time.sleep(2)"""
 
 def extract_links(elements,start=0):
     global brow
@@ -111,6 +120,22 @@ def extract_links(elements,start=0):
         except selenium.common.exceptions.StaleElementReferenceException:
             print("Stale Element Exception Caught for i=%i" %i)
 
+
+open_credential()
+#Disable Infobar on Chrome automated web browser
+chrome_options = Options()
+chrome_options.add_argument("--disable-infobars")
+brow = webdriver.Chrome(chrome_options=chrome_options)
+
+Login()
+expand_page()
+t=tk.Tk()
+
+a=brow.find_elements_by_class_name('AnswerQuickShare')
+links=[]
+print("HERE")
+time.sleep(2)
+
 extract_links(a,(int(input("Enter Last Index of temp.sid file: "))-1)*2)
 
 options = {
@@ -118,7 +143,7 @@ options = {
 	'dpi': 450,
 	'javascript-delay':10000
 }
-soup=BeautifulSoup(brow.page_source,"lxml")
+#soup=BeautifulSoup(brow.page_source,"lxml")
 
 """l=len(elem_share)
 j=0
