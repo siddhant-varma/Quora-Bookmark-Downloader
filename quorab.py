@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import pyperclip
 import pdfkit
+import selenium.common.exceptions
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from selenium.webdriver.common.action_chains import ActionChains
@@ -88,7 +89,10 @@ print("HERE")
 time.sleep(2)
 
 def extract_links(elements,start=0):
-    for i in range(246,len(elements),2):
+    global brow
+    global links
+    global t
+    for i in range(start,len(elements),2):
         try:
             ActionChains(brow).move_to_element(elements[i]).click().perform()
             time.sleep(2)
@@ -101,7 +105,7 @@ def extract_links(elements,start=0):
         except selenium.common.exceptions.StaleElementReferenceException:
             print("Stale Element Exception Caught for i=%i" %i)
 
-extract_links(a)
+extract_links(a,int(input("Enter Last Index of temp.sid file: "))*2)
 
 options = {
 	'page-size': 'Letter',
@@ -130,7 +134,7 @@ for i in range(l):
 print("Conversion Completed")
 
 
-def write_file(links):
+def write_file(links,file):
     with open(file+".sid",'a+') as out:
         for link in links:
             out.write(link+"\n")
