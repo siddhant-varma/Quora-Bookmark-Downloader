@@ -14,6 +14,12 @@ creds={}
 username = ''
 password = ''
 
+def write_file(links,file):
+    with open(file+".sid",'a+') as out:
+        for link in links:
+            out.write(link+"\n")
+
+
 
 def save_credential(field=0):
     global username
@@ -105,7 +111,7 @@ def extract_links(elements,start=0):
         except selenium.common.exceptions.StaleElementReferenceException:
             print("Stale Element Exception Caught for i=%i" %i)
 
-extract_links(a,int(input("Enter Last Index of temp.sid file: "))*2)
+extract_links(a,(int(input("Enter Last Index of temp.sid file: "))-1)*2)
 
 options = {
 	'page-size': 'Letter',
@@ -133,11 +139,6 @@ for i in range(l):
 """	
 print("Conversion Completed")
 
-
-def write_file(links,file):
-    with open(file+".sid",'a+') as out:
-        for link in links:
-            out.write(link+"\n")
 
 
 
