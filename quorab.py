@@ -14,7 +14,11 @@ import tkinter as tk
 creds={}
 username = ''
 password = ''
-
+options = {
+	'page-size': 'Letter',
+	'dpi': 450,
+	'javascript-delay':10000
+}
 def write_file(links,file):
     with open(file+".sid",'a+') as out:
         for link in links:
@@ -49,12 +53,6 @@ def open_credential():
     except FileNotFoundError:
         save_credential()
 
-"""open_credential()
-#Disable Infobar on Chrome automated web browser
-chrome_options = Options()
-chrome_options.add_argument("--disable-infobars")
-brow = webdriver.Chrome(chrome_options=chrome_options)"""
-
 def Login():
     global brow
     brow.get("https://www.quora.com/bookmarked_answers")
@@ -82,26 +80,37 @@ def expand_page():
     brow.execute_script("window.scrollTo(0, 0);")
     time.sleep(1)
 
-def save_answer(link,path):
-    path=path.replace("\\","\\\\")
+restricted_chars=['/',"\\","*",":","?","<",">","|",'"']
+
+def save_answer(link,serial):
     global brow
     brow.get(link)
-    pdfkit.from_url(link,brow.title.replace("?",'')+".pdf")
+    #implement a method to check page loaded or not
+    if not os.path.exists(os.getcwd()+"\\pdf\\"):
+        os.makedirs(os.getcwd()+"\\pdf\\")
+    name=brow.title[brow.title.find("to")+3:brow.title.find("-")] + " by " + brow.title[:brow.title.find("'s")]
+    for char in restricted_chars:
+        #print(char)
+        name=name.replace(char,' ')
+    print(name)
+    pdfkit.from_url(link,os.getcwd()+"\\pdf\\%i."%serial+name+".pdf",options=options)
+    #print(os.getcwd()+"\\pdf\\"+brow.title.replace("?",'')+".pdf")
 
-"""open_credential()
-#Disable Infobar on Chrome automated web browser
-chrome_options = Options()
-chrome_options.add_argument("--disable-infobars")
-brow = webdriver.Chrome(chrome_options=chrome_options)
+def save_pdf(file_path=os.getcwd()+"\\temp.sid",start=0):
+    #print(file_path)
+    if not os.path.exists(file_path):
+        print("No file found...")
+        return
+    else:
+        i=0
+        with open(file_path,'r') as fil:
+            for j,link in enumerate(fil):
+                if j>=start:
+                    save_answer(link,j+1)
+                    i+=1
 
-Login()
-expand_page()
-t=tk.Tk()
-
-a=brow.find_elements_by_class_name('AnswerQuickShare')
-links=[]
-print("HERE")
-time.sleep(2)"""
+        print("Total %i answers saved as pdf." %i)
+    
 
 def extract_links(elements,start=0):
     global brow
@@ -114,7 +123,8 @@ def extract_links(elements,start=0):
             l=brow.find_element_by_link_text('Copy Link')
             ActionChains(brow).move_to_element(l).click().perform()
             time.sleep(1)
-            text = t.clipboard_get()
+            #text = t.clipboard_get()
+            text=pyperclip.paste()
             print(text)
             links.append(text)
         except selenium.common.exceptions.StaleElementReferenceException:
@@ -137,18 +147,15 @@ print("HERE")
 time.sleep(2)
 
 extract_links(a,(int(input("Enter Last Index of temp.sid file: "))-1)*2)
+"""
 
-options = {
-	'page-size': 'Letter',
-	'dpi': 450,
-	'javascript-delay':10000
-}"""
+
 #soup=BeautifulSoup(brow.page_source,"lxml")
 
 url = "http://qr.ae/TUTzkR"
 
-save_answer(url,os.getcwd())
-
+#save_answer(url,os.getcwd())
+save_pdf(os.getcwd()+"\\temp.sid",int(input("Last Saved Answer Number: ")))
 """l=len(elem_share)
 j=0
 for i in range(l):
@@ -165,7 +172,8 @@ for i in range(l):
 	except:
 		j+=1
 		print("Fail",j)
-"""	
+"""
+brow.close()
 print("Conversion Completed")
 
 
