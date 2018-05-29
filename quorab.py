@@ -86,7 +86,7 @@ def save_answer(link,path):
     path=path.replace("\\","\\\\")
     global brow
     brow.get(link)
-    pdfkit.from_url(link,brow.title+".pdf")
+    pdfkit.from_url(link,brow.title.replace("?",'')+".pdf")
 
 """open_credential()
 #Disable Infobar on Chrome automated web browser
@@ -126,7 +126,7 @@ open_credential()
 chrome_options = Options()
 chrome_options.add_argument("--disable-infobars")
 brow = webdriver.Chrome(chrome_options=chrome_options)
-
+"""
 Login()
 expand_page()
 t=tk.Tk()
@@ -142,8 +142,12 @@ options = {
 	'page-size': 'Letter',
 	'dpi': 450,
 	'javascript-delay':10000
-}
+}"""
 #soup=BeautifulSoup(brow.page_source,"lxml")
+
+url = "http://qr.ae/TUTzkR"
+
+save_answer(url,os.getcwd())
 
 """l=len(elem_share)
 j=0
