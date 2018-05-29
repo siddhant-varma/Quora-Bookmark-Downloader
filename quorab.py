@@ -50,32 +50,36 @@ chrome_options = Options()
 chrome_options.add_argument("--disable-infobars")
 brow = webdriver.Chrome(chrome_options=chrome_options)
 
+def Login():
+    global brow
+    brow.get("https://www.quora.com/bookmarked_answers")
+    brow.find_element_by_xpath('//*[@class="text header_login_text_box ignore_interaction"]').send_keys(creds['quora'][0])
+    brow.find_element_by_xpath('//*[@placeholder="Password"]').send_keys(creds['quora'][1])
+    time.sleep(1)
+    brow.find_element_by_xpath('//*[@value="Login"]').click()
+    time.sleep(1)
 
-brow.get("https://www.quora.com/bookmarked_answers")
-brow.find_element_by_xpath('//*[@class="text header_login_text_box ignore_interaction"]').send_keys(creds['quora'][0])
-brow.find_element_by_xpath('//*[@placeholder="Password"]').send_keys(creds['quora'][1])
-time.sleep(1)
-brow.find_element_by_xpath('//*[@value="Login"]').click()
-time.sleep(1)
+def expand_page():
+    global brow
+    first_question=brow.find_element_by_class_name("question_link").text
+    brow.get("https://www.quora.com/bookmarked_answers?order=desc")
 
-first_question=brow.find_element_by_class_name("question_link").text
-brow.get("https://www.quora.com/bookmarked_answers?order=desc")
-
-#wait_inp=input("\n\n\t\tPress Enter after Bookmark page is Fully Loaded\n\n")
-
-i=0
-while True:
-	brow.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-	currentQuestion=brow.find_elements_by_class_name("question_link")
-	currentQuestion=currentQuestion[len(currentQuestion)-1].text
-	i+=1
-	if(first_question == currentQuestion):
-		break
+    i=0
+    while True:
+            brow.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            currentQuestion=brow.find_elements_by_class_name("question_link")
+            currentQuestion=currentQuestion[len(currentQuestion)-1].text
+            i+=1
+            if(first_question == currentQuestion):
+                    break
 
 
-brow.execute_script("window.scrollTo(0, 0);")
-time.sleep(1)
+    brow.execute_script("window.scrollTo(0, 0);")
+    time.sleep(1)
 
+
+Login()
+expand_page()
 t=tk.Tk()
 
 a=brow.find_elements_by_class_name('AnswerQuickShare')
@@ -83,19 +87,21 @@ links=[]
 print("HERE")
 time.sleep(2)
 
-for i in range(246,len(a),2):
-    try:
-        ActionChains(brow).move_to_element(a[i]).click().perform()
-        time.sleep(2)
-        l=brow.find_element_by_link_text('Copy Link')
-        ActionChains(brow).move_to_element(l).click().perform()
-        time.sleep(1)
-        text = t.clipboard_get()
-        print(text)
-        links.append(text)
-    except selenium.common.exceptions.StaleElementReferenceException:
-        print("Stale Element Exception Caught for i=%i" %i)
+def extract_links(elements,start=0):
+    for i in range(246,len(elements),2):
+        try:
+            ActionChains(brow).move_to_element(elements[i]).click().perform()
+            time.sleep(2)
+            l=brow.find_element_by_link_text('Copy Link')
+            ActionChains(brow).move_to_element(l).click().perform()
+            time.sleep(1)
+            text = t.clipboard_get()
+            print(text)
+            links.append(text)
+        except selenium.common.exceptions.StaleElementReferenceException:
+            print("Stale Element Exception Caught for i=%i" %i)
 
+extract_links(a)
 
 options = {
 	'page-size': 'Letter',
