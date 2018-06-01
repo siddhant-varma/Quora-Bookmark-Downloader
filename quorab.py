@@ -1,15 +1,16 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
 import time
 import pyperclip
 import pdfkit
 import os
+import tkinter as tk
 import selenium.common.exceptions
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
-import tkinter as tk
+
 
 creds={}
 links=[]
