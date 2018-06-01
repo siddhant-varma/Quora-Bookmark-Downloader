@@ -12,8 +12,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 import tkinter as tk
 
 creds={}
+links=[]
 username = ''
 password = ''
+delimiter="~"
 options = {
 	'page-size': 'Letter',
 	'dpi': 450,
@@ -36,9 +38,8 @@ def save_credential(field=0):
         username = str(input("Enter username/email for Quora Account:"))
         password = str(input("Enter password for Quora Account:"))
     with open("creds.dat",'w') as cred:
-        cred.write("quora:%s-%s" %(username, password))
+        cred.write("quora:%s%s%s" %(username, delimiter, password))
     open_credential()
-
 
 #Extracts all the credantials from the file
 def open_credential():
@@ -47,9 +48,9 @@ def open_credential():
     try:
         with open("creds.dat",'r') as cred:
             for line in cred:
-                username = line.split(':')[1].strip().split('-')[0]
-                password = line.split(':')[1].strip().split('-')[1]
-                creds[line.split(':')[0]]= [username,password]
+                username = line.split(':')[1].strip().split(delimiter)[0]
+                password = line.split(':')[1].strip().split(delimiter)[1]
+                creds[line.split(':')[0]]= [username, password]
     except FileNotFoundError:
         save_credential()
 
@@ -78,7 +79,7 @@ def expand_page():
 
 
     brow.execute_script("window.scrollTo(0, 0);")
-    time.sleep(1)
+    time.sleep(2)
 
 restricted_chars=['/',"\\","*",":","?","<",">","|",'"',"."]
 
@@ -88,7 +89,9 @@ def save_answer(link,serial):
     #implement a method to check page loaded or not
     if not os.path.exists(os.getcwd()+"\\pdf\\"):
         os.makedirs(os.getcwd()+"\\pdf\\")
-    name=brow.title[brow.title.find("to")+3:brow.title.find("-")] + " by " + brow.title[:brow.title.find("'s")]
+    writer=brow.title[:brow.title.find("'s")]
+    writer=writer.encode("ascii",errors="ignore").decode().strip("(").strip(")")
+    name=brow.title[brow.title.find("to")+3:brow.title.find("-",-1)] + " by " + writer
     if len(name)>255:
         by=name[name.find("by")+2:]
         name=name[:name.find(" ",100)]+by #(len(name)-(len(name)%255+50))%255)
@@ -138,19 +141,20 @@ open_credential()
 chrome_options = Options()
 chrome_options.add_argument("--disable-infobars")
 brow = webdriver.Chrome(chrome_options=chrome_options)
-"""
+brow.maximize_window()
+
 Login()
 expand_page()
 
 a=brow.find_elements_by_class_name('AnswerQuickShare')
-links=[]
-print("HERE")
-time.sleep(2)
 
-extract_links(a,(int(input("Enter Last Index of temp.sid file: "))-1)*2)
-"""
+#print("HERE")
+#time.sleep(2)
 
-url = "http://qr.ae/TUTzkR"
+extract_links(a,0)#(int(input("Enter Last Index of temp.sid file: "))-1)*2)
+
+
+#url = "http://qr.ae/TUTzkR"
 
 #save_answer(url,os.getcwd())
 save_pdf(os.getcwd()+"\\temp.sid",int(input("Last Saved Answer Number: ")))
